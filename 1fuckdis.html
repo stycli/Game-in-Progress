@@ -13,6 +13,8 @@ canvas {
 <script>
 
 var myGamePiece;
+var boss;
+var projectile;
 
 
 //Left, Up, Right, Down
@@ -33,11 +35,46 @@ window.addEventListener("keyup", function(event) {
 
 var moveSpeed=5;
 
+function checkKeys(){
+	
+	if (keys[37]){
+	moveLeft();
+	}
+	if (keys[39]){
+	moveRight();
+	}
+	if (keys[17]){
+	moveSpeed = 15;
+	}
+	else{
+	moveSpeed = 5;
+	}
+	if (keys[38]){
+	
+	hop();
+	
+	}	
+	
+	if(!keys[38]) {
+	
+	fall();
+	
+	}
+
+		
+	
+}	
+
+
 	
 
 function startGame() {
     myGameArea.start();
-    myGamePiece = new component(100, 80, "1bun.png", 100, 100, "image");
+	boss= new component(600, 550, "blue", 600, 0);
+    myGamePiece = new component(100, 80, "red", 100, 100);
+
+	projectile = new component (60, 60, "green", 1100, 70);
+	
 }
 
 
@@ -58,8 +95,8 @@ var myGameArea = {
 }
 
 
-function component(width, height, color, x, y, type) {
- 	this.type = type;
+function component(width, height, color, x, y) {
+ 	/*this.type = type;
 	
 	if (type == "image") {
 		
@@ -90,7 +127,7 @@ function component(width, height, color, x, y, type) {
 	cts.fillRect(this.x, this.y, this.width, this.height);
 	}
 	
-}
+}*/
 
 
 
@@ -102,7 +139,7 @@ function component(width, height, color, x, y, type) {
 
 
 
-  /* this.width = width;
+  this.width = width;
     this.height = height;  
 	this.x=x;
 	this.y=y;
@@ -114,12 +151,15 @@ function component(width, height, color, x, y, type) {
 	this.newPos = function(){
 		this.x = 600;
 		this.y = 225;
-	}*/
+	}
 }
 function updateGameArea(){
 	myGameArea.clear();
 	//myGamePiece.newPos();
+	boss.update();
 	myGamePiece.update();
+	projectile.update();
+	
 	checkKeys();
 	gravity();
 }
@@ -144,7 +184,7 @@ function moveDown(){
 }
 function moveLeft(){
 	
-	if(myGamePiece.x==0){
+	if(myGamePiece.x<=0){
 		myGamePiece.x-=0;
 	}
 	else{
@@ -152,7 +192,7 @@ function moveLeft(){
 	}	
 }
 function moveRight(){
-	if(myGamePiece.x>=1200){
+	if(myGamePiece.x>=1100){
 		myGamePiece.x-=0;
 	}
 	else{
@@ -172,51 +212,69 @@ function moveRight(){
 
 }*/
 
+
 var g = 0;
-function gravity(){
+
+
+function gravity() {
+	
+	if(myGamePiece.y < 400) {
 		
-	if(myGamePiece.y <= 400){
-		myGamePiece.y +=g;
-		g+=1;
+		if(400 - g < myGamePiece.y) {
+					myGamePiece.y = 400;
+			
+		g = 1;
+		
+		}
+		
+		else {
+			
+			myGamePiece.y += g;
+			
+			g += 1;
+		
+		}
+	
 	}
+	
+	//console.log(g);
+	
+	//console.log(myGamePiece.y);
+
 }
+
+
+var jumpForce = 20;
+
+var hasJumped = false;
 
 function hop(){
-	var jump = 10;
-	while(jump>0){
-		his.interval = clearInterval(updateGameArea);
-		myGamePiece.y -=jump;
-		jump -=1;
+	
+	if(!hasJumped) {
+		
+		myGamePiece.y -= jumpForce;
+	
 	}
-	this.interval = setInterval(updateGameArea, 20);	
+
 }
 
 
-function checkKeys(){
+function fall() {
 	
-	if (keys[37]){
-	moveLeft();
-	}
-	if (keys[39]){
-	moveRight();
-	}
-	if (keys[17]){
-	moveSpeed = 15;
-	}
-	else{
-	moveSpeed = 5;
-	}
-	if (keys[32]){
-	hop();
-	}
+	if(myGamePiece.y >= 400) {
 		
+		hasJumped = false;
 
+	}
 	
-}	
-
-
-
-
+	else {
+		
+		hasJumped = true;
+		
+		myGamePiece.y -= jumpForce;
+	
+}
+}
 
 
 
